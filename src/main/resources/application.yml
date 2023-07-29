@@ -1,0 +1,29 @@
+server:
+  port: 8081
+
+spring:
+  jpa:
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+  datasource:
+    url: jdbc:postgresql://localhost:5432/custom_database
+    username: postgres
+    password: password
+    hikari:
+      connection-timeout: 45000
+      maximum-pool-size: 100
+      minimum-idle: 10
+      idle-timeout: 60000
+      max-lifetime: 120000
+      auto-commit: true
+
+keycloak:
+  auth-server-url: http://localhost:8080
+  realm: custom-realm
+  resource: custom-client
+  bearer-only: true
+  use-resource-role-mappings: false
+  public-client: true
+
