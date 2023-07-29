@@ -1,4 +1,4 @@
-#TO-DO app
+# TO-DO app
 
 ## Introduction
 This project is simple to-do app created with Java and Spring. Running this project requires Postgres DB and keycloak.
