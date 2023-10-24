@@ -18,12 +18,9 @@ spring:
       idle-timeout: 60000
       max-lifetime: 120000
       auto-commit: true
-
-keycloak:
-  auth-server-url: http://localhost:8080
-  realm: custom-realm
-  resource: custom-client
-  bearer-only: true
-  use-resource-role-mappings: false
-  public-client: true
-
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/custom-realm
+          jwk-set-uri: http://localhost:8080/realms/custom-realm/protocol/openid-connect/certs

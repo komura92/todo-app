@@ -22,7 +22,7 @@ public class TaskService {
 
     @Transactional
     public TaskDto createUpdateTask(TaskDto taskDto) {
-        return Optional.ofNullable(taskDto.getId())
+        return Optional.ofNullable(taskDto.id())
                 .map(taskId -> updateTask(taskDto))
                 .orElseGet(() -> createTask(taskDto));
     }
@@ -33,7 +33,7 @@ public class TaskService {
     }
 
     private TaskDto updateTask(TaskDto taskDto) {
-        Task task = taskRepository.getMyTask(taskDto.getId(), UserUtils.getActualUserId(), TaskStatus.OPEN.name())
+        Task task = taskRepository.getMyTask(taskDto.id(), UserUtils.getActualUserId(), TaskStatus.OPEN.name())
                 .orElseThrow(TaskNotFoundException::new);
         TaskMapper.updateEntity(task, taskDto);
         return TaskMapper.toDto(taskRepository.save(task));

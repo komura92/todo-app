@@ -2,8 +2,7 @@ package com.example.todoapp.domain;
 
 import java.util.List;
 
-import javax.annotation.PostConstruct;
-
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -105,7 +104,7 @@ class TaskControllerApiTest {
     void userCanDeleteOpenTask() throws Exception {
         TaskDto taskToDelete = taskClient.createUpdateTask(TaskTestConstants.CREATE_TASK_DTO);
         List<TaskDto> doneTasks = taskClient.getOpenTasks();
-        taskClient.deleteTask(taskToDelete.getId());
+        taskClient.deleteTask(taskToDelete.id());
         List<TaskDto> doneTasksAfterDelete = taskClient.getOpenTasks();
         assertThat(doneTasks.size() - 1)
                 .describedAs("Task was not deleted")

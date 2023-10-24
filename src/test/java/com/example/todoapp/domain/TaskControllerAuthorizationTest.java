@@ -6,6 +6,8 @@ import com.example.todoapp.infrastructure.client.TestUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
+import jakarta.annotation.PostConstruct;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,8 +17,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-
-import javax.annotation.PostConstruct;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -51,6 +52,7 @@ class TaskControllerAuthorizationTest {
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
                         .content(getObjectAsString(TaskTestConstants.CREATE_TASK_DTO))
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(200));
     }
 
@@ -60,8 +62,11 @@ class TaskControllerAuthorizationTest {
 
     @Test
     void unauthorizedCannotCreateUpdateTask() throws Exception {
-        mvc.perform(post("/task"))
-                .andExpect(status().is(401));
+        mvc.perform(post("/task")
+                        .contentType(MediaType.APPLICATION_JSON_VALUE)
+                        .content(getObjectAsString(TaskTestConstants.CREATE_TASK_DTO)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -70,6 +75,7 @@ class TaskControllerAuthorizationTest {
                         .queryParam("startIndex", "0")
                         .queryParam("quantity", "50")
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(200));
     }
 
@@ -78,7 +84,8 @@ class TaskControllerAuthorizationTest {
         mvc.perform(get("/task/open")
                         .queryParam("startIndex", "0")
                         .queryParam("quantity", "50"))
-                .andExpect(status().is(401));
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -87,6 +94,7 @@ class TaskControllerAuthorizationTest {
                         .queryParam("startIndex", "0")
                         .queryParam("quantity", "50")
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(200));
     }
 
@@ -95,32 +103,37 @@ class TaskControllerAuthorizationTest {
         mvc.perform(get("/task/done")
                         .queryParam("startIndex", "0")
                         .queryParam("quantity", "50"))
-                .andExpect(status().is(401));
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
     void authorizedCanDeleteTask() throws Exception {
         mvc.perform(delete("/task?taskId=-1")
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(404));
     }
 
     @Test
     void unauthorizedCannotDeleteTask() throws Exception {
-        mvc.perform(delete("/task?taskId=1"))
-                .andExpect(status().is(401));
+        mvc.perform(delete("/task?taskId=-1"))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
     void authorizedCanMarkTaskAsDone() throws Exception {
         mvc.perform(put("/task?taskId=-1")
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(404));
     }
 
     @Test
     void unauthorizedCannotMarkTaskAsDone() throws Exception {
         mvc.perform(delete("/task?taskId=1"))
-                .andExpect(status().is(401));
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().isUnauthorized());
     }
 }

@@ -3,7 +3,7 @@ package com.example.todoapp.domain;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -24,7 +24,7 @@ import com.example.todoapp.domain.model.TaskDto;
 import com.example.todoapp.domain.model.TaskStatus;
 import com.example.todoapp.infrastructure.client.TaskClient;
 
-import static org.keycloak.common.util.CollectionUtil.isNotEmpty;
+import static org.hibernate.internal.util.collections.CollectionHelper.isNotEmpty;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -64,9 +64,10 @@ class TaskControllerPaginationTest {
 
         for (int i = 0; i < 27; i++) {
             TaskDto createdTask = taskClient.createUpdateTask(TaskTestConstants.CREATE_TASK_DTO);
-            taskClient.markTaskAsDone(createdTask.getId());
-            createdTask.setStatus(TaskStatus.DONE);
-            doneTasks.add(createdTask);
+            taskClient.markTaskAsDone(createdTask.id());
+            doneTasks.add(createdTask.toBuilder()
+                    .status(TaskStatus.DONE)
+                    .build());
         }
     }
 

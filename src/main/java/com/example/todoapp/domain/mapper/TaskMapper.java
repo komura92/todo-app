@@ -12,20 +12,20 @@ import java.util.stream.Collectors;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class TaskMapper {
     public static void updateEntity(Task task, TaskDto taskDto) {
-        task.setDeadline(taskDto.getDeadline());
-        task.setName(taskDto.getName());
-        task.setDescription(taskDto.getDescription());
-        task.setPriority(taskDto.getPriority());
+        task.setDeadline(taskDto.deadline());
+        task.setName(taskDto.name());
+        task.setDescription(taskDto.description());
+        task.setPriority(taskDto.priority());
     }
 
     public static Task toCreateEntity(TaskDto taskDto, String userId) {
         return Task.builder()
-                .name(taskDto.getName())
-                .description(taskDto.getDescription())
-                .deadline(taskDto.getDeadline())
+                .name(taskDto.name())
+                .description(taskDto.description())
+                .deadline(taskDto.deadline())
                 .userId(userId)
                 .status(TaskStatus.OPEN.name())
-                .priority(taskDto.getPriority())
+                .priority(taskDto.priority())
                 .build();
     }
 
@@ -47,6 +47,6 @@ public class TaskMapper {
     public static List<TaskDto> toDtos(List<Task> tasks) {
         return tasks.stream()
                 .map(TaskMapper::toDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 }

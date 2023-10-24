@@ -16,15 +16,11 @@ import java.util.Map;
 public class KeycloakClient {
 
     private final String keycloakHost;
-    private final String clientId;
-    private final String realmName;
 
     private static final Map<TestUser, TokenResponse> userCache = new HashMap<>();
 
     public KeycloakClient(Environment env) {
-        keycloakHost = env.getProperty("keycloak.auth-server-url");
-        clientId = env.getProperty("keycloak.resource");
-        realmName = env.getProperty("keycloak.realm");
+        keycloakHost = env.getProperty("spring.security.oauth2.resourceserver.jwt.issuer-uri");
     }
 
 
@@ -72,7 +68,7 @@ public class KeycloakClient {
         return WebClient.builder()
                 .build()
                 .post()
-                .uri(URI.create(keycloakHost + "/realms/" + realmName + "/protocol/openid-connect/token"))
+                .uri(URI.create(keycloakHost + "/protocol/openid-connect/token"))
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                 .body(getLoginBody(user, password))
                 .retrieve()
@@ -84,6 +80,6 @@ public class KeycloakClient {
         return BodyInserters.fromFormData("username", user)
                 .with("password", password)
                 .with("grant_type", "password")
-                .with("client_id", clientId);
+                .with("client_id", "custom-client");
     }
 }

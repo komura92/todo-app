@@ -6,11 +6,9 @@ spring:
     password: password
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
-
-keycloak:
-  auth-server-url: http://localhost:8080
-  realm: custom-realm
-  bearer-only: 'true'
-  public-client: 'true'
-  use-resource-role-mappings: 'false'
-  resource: custom-client
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/custom-realm
+          jwk-set-uri: http://localhost:8080/realms/custom-realm/protocol/openid-connect/certs

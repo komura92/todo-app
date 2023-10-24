@@ -16,27 +16,27 @@ public class TaskDtoValidator {
     public static void validateCreate(TaskDto taskToCreate, TaskDto createdTask) {
         SoftAssertions assertions = new SoftAssertions();
 
-        assertions.assertThat(createdTask.getId())
+        assertions.assertThat(createdTask.id())
                 .describedAs("ID is not set")
                 .isNotNull();
 
-        assertions.assertThat(taskToCreate.getName())
+        assertions.assertThat(taskToCreate.name())
                 .describedAs("Name doesn't match")
-                .isEqualTo(createdTask.getName());
+                .isEqualTo(createdTask.name());
 
-        assertions.assertThat(taskToCreate.getDescription())
+        assertions.assertThat(taskToCreate.description())
                 .describedAs("Description doesn't match")
-                .isEqualTo(createdTask.getDescription());
+                .isEqualTo(createdTask.description());
 
-        assertions.assertThat(taskToCreate.getPriority())
+        assertions.assertThat(taskToCreate.priority())
                 .describedAs("Priority doesn't match")
-                .isEqualTo(createdTask.getPriority());
+                .isEqualTo(createdTask.priority());
 
-        assertions.assertThat(taskToCreate.getDeadline())
+        assertions.assertThat(taskToCreate.deadline())
                 .describedAs("Deadline doesn't match")
-                .isEqualTo(createdTask.getDeadline());
+                .isEqualTo(createdTask.deadline());
 
-        assertions.assertThat(createdTask.getStatus())
+        assertions.assertThat(createdTask.status())
                 .describedAs("Status not set properly")
                 .isEqualTo(TaskStatus.OPEN);
 
@@ -46,33 +46,33 @@ public class TaskDtoValidator {
     public static void validateUpdate(TaskDto taskToCreate, TaskDto createdTask) {
         SoftAssertions assertions = new SoftAssertions();
 
-        assertions.assertThat(taskToCreate.getId())
+        assertions.assertThat(taskToCreate.id())
                 .describedAs("ID doesn't match")
-                .isEqualTo(createdTask.getId());
+                .isEqualTo(createdTask.id());
 
-        assertions.assertThat(taskToCreate.getName())
+        assertions.assertThat(taskToCreate.name())
                 .describedAs("Name doesn't match")
-                .isEqualTo(createdTask.getName());
+                .isEqualTo(createdTask.name());
 
-        assertions.assertThat(taskToCreate.getDescription())
+        assertions.assertThat(taskToCreate.description())
                 .describedAs("Description doesn't match")
-                .isEqualTo(createdTask.getDescription());
+                .isEqualTo(createdTask.description());
 
-        assertions.assertThat(taskToCreate.getPriority())
+        assertions.assertThat(taskToCreate.priority())
                 .describedAs("Priority doesn't match")
-                .isEqualTo(createdTask.getPriority());
+                .isEqualTo(createdTask.priority());
 
-        assertions.assertThat(taskToCreate.getDeadline())
+        assertions.assertThat(taskToCreate.deadline())
                 .describedAs("Deadline doesn't match")
-                .isEqualTo(createdTask.getDeadline());
+                .isEqualTo(createdTask.deadline());
 
         assertions.assertAll();
     }
 
     public static void validatePredefined(TaskDto taskToCreate, TaskDto createdTask) {
-        assertThat(taskToCreate.getStatus())
+        assertThat(taskToCreate.status())
                 .describedAs("Status can be set user side")
-                .isNotEqualTo(createdTask.getStatus());
+                .isNotEqualTo(createdTask.status());
     }
 
     public static void validateMarkingAsDone(List<TaskDto> openTasks,
