@@ -75,7 +75,9 @@ class TaskControllerAuthorizationTest {
 
     @Test
     void unauthorizedCannotGetOpenTasks() throws Exception {
-        mvc.perform(get("/task/open"))
+        mvc.perform(get("/task/open")
+                        .queryParam("startIndex", "0")
+                        .queryParam("quantity", "50"))
                 .andExpect(status().is(401));
     }
 
@@ -90,7 +92,9 @@ class TaskControllerAuthorizationTest {
 
     @Test
     void unauthorizedCannotGetDoneTasks() throws Exception {
-        mvc.perform(get("/task/done"))
+        mvc.perform(get("/task/done")
+                        .queryParam("startIndex", "0")
+                        .queryParam("quantity", "50"))
                 .andExpect(status().is(401));
     }
 

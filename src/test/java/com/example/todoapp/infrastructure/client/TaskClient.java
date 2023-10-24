@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import java.util.List;
 
@@ -24,14 +25,12 @@ public class TaskClient {
 
     private final MockMvc mvc;
 
-    private final Environment environment;
     private KeycloakClient keycloakClient;
 
     private final ObjectMapper objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
 
     public TaskClient(MockMvc mvc, Environment environment) {
         this.mvc = mvc;
-        this.environment = environment;
         keycloakClient = new KeycloakClient(environment);
     }
 
@@ -44,6 +43,7 @@ public class TaskClient {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(task))
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print())
                 .andExpect(status().is(404));
     }
 
@@ -52,6 +52,7 @@ public class TaskClient {
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(objectMapper.writeValueAsString(task))
                                 .header("Authorization", "Bearer " + keycloakClient.getAccessToken(user)))
+                        .andDo(MockMvcResultHandlers.print())
                         .andReturn()
                         .getResponse()
                         .getContentAsString(),
@@ -60,7 +61,8 @@ public class TaskClient {
 
     public void deleteTask(Long taskId) throws Exception {
         mvc.perform(delete("/task?taskId=" + taskId.toString())
-                .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)));
+                .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print());
     }
 
     public List<TaskDto> getDoneTasks() throws Exception {
@@ -72,6 +74,7 @@ public class TaskClient {
                         .queryParam("startIndex", startIndex.toString())
                         .queryParam("quantity", String.valueOf(quantity))
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
@@ -87,6 +90,7 @@ public class TaskClient {
                         .queryParam("startIndex", startIndex.toString())
                         .queryParam("quantity", String.valueOf(quantity))
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print())
                 .andReturn()
                 .getResponse()
                 .getContentAsString();
@@ -95,6 +99,14 @@ public class TaskClient {
 
     public void markTaskAsDone(Long taskId) throws Exception {
         mvc.perform(put("/task?taskId=" + taskId.toString())
-                .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)));
+                .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    public void markNotExistingTaskAsDoneReturns404(Long taskId) throws Exception {
+        mvc.perform(put("/task?taskId=" + taskId.toString())
+                .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(status().is(404));
     }
 }

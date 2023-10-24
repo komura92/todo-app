@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ExtendWith(SpringExtension.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-class TaskCrudApiTest {
+class TaskControllerApiTest {
 
 
     @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -136,5 +136,11 @@ class TaskCrudApiTest {
     void userCannotEditSomebodysTask() throws Exception {
         taskClient.createUpdateTaskByUser(TaskTestConstants.CREATE_TASK_DTO, TestUser.USER_2);
         taskClient.createUpdateTaskThrows404(TaskTestConstants.USER_2_TASK_UPDATE);
+    }
+
+    @Test
+    @Order(10)
+    void userGets404OnMarkingAsDoneNotExistingTask() throws Exception {
+        taskClient.markNotExistingTaskAsDoneReturns404(-1L);
     }
 }
