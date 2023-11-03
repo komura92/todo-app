@@ -1,0 +1,7 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://todo-app-keycloak-h2-svc:32061/realms/custom-realm
+          jwk-set-uri: http://todo-app-keycloak-h2-svc:32061/realms/custom-realm/protocol/openid-connect/certs

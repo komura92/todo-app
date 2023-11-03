@@ -1,0 +1,35 @@
+# KC running on h2 DB + PG DB for local running app instance
+
+version: '3'
+
+services:
+
+
+# APP PG DB
+  todo-app-db:
+    image: 'postgres:13.1-alpine'
+    container_name: todo-app-db-dc
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=custom_database
+    ports:
+      - "32032:5432"
+
+
+# KC
+  todo-app-keycloak-svc:
+    image: 'keycloak/keycloak:22.0.5'
+    container_name: todo-app-keycloak-svc-dc
+    command: -v start-dev --import-realm
+    # mounting realm and user accounts JSONs for importing
+    volumes:
+      - ../../src/main/resources/keycloak:/opt/keycloak/data/import
+    environment:
+#      KC_HEALTH_ENABLED: 'true'
+      KC_HTTP_ENABLED: 'true'
+#      KC_METRICS_ENABLED: 'true'
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "32061:8080"

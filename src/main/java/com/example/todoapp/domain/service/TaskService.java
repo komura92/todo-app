@@ -28,37 +28,37 @@ public class TaskService {
     }
 
     private TaskDto createTask(TaskDto taskDto) {
-        Task newTask = taskRepository.save(TaskMapper.toCreateEntity(taskDto, UserUtils.getActualUserId()));
+        Task newTask = taskRepository.save(TaskMapper.toCreateEntity(taskDto, UserUtils.getActualUserIdOrThrow()));
         return TaskMapper.toDto(newTask);
     }
 
     private TaskDto updateTask(TaskDto taskDto) {
-        Task task = taskRepository.getMyTask(taskDto.id(), UserUtils.getActualUserId(), TaskStatus.OPEN.name())
+        Task task = taskRepository.getMyTask(taskDto.id(), UserUtils.getActualUserIdOrThrow(), TaskStatus.OPEN.name())
                 .orElseThrow(TaskNotFoundException::new);
         TaskMapper.updateEntity(task, taskDto);
         return TaskMapper.toDto(taskRepository.save(task));
     }
 
     public void deleteTask(Long taskId) {
-        Task task = taskRepository.getMyTask(taskId, UserUtils.getActualUserId(), TaskStatus.OPEN.name())
+        Task task = taskRepository.getMyTask(taskId, UserUtils.getActualUserIdOrThrow(), TaskStatus.OPEN.name())
                 .orElseThrow(TaskNotFoundException::new);
         taskRepository.delete(task);
     }
 
     public void markTaskAsDone(Long taskId) {
-        Task task = taskRepository.getMyTask(taskId, UserUtils.getActualUserId(), TaskStatus.OPEN.name())
+        Task task = taskRepository.getMyTask(taskId, UserUtils.getActualUserIdOrThrow(), TaskStatus.OPEN.name())
                 .orElseThrow(TaskNotFoundException::new);
         TaskMapper.markAsDone(task);
         taskRepository.save(task);
     }
 
     public List<TaskDto> getMyOpenTasks(Long startIndex, int quantity) {
-        List<Task> myTasks = taskRepository.getMyTasksByStatus(UserUtils.getActualUserId(), TaskStatus.OPEN.name(), startIndex, quantity);
+        List<Task> myTasks = taskRepository.getMyTasksByStatus(UserUtils.getActualUserIdOrThrow(), TaskStatus.OPEN.name(), startIndex, quantity);
         return TaskMapper.toDtos(myTasks);
     }
 
     public List<TaskDto> getMyDoneTasks(Long startIndex, int quantity) {
-        List<Task> myTasks = taskRepository.getMyTasksByStatus(UserUtils.getActualUserId(), TaskStatus.DONE.name(), startIndex, quantity);
+        List<Task> myTasks = taskRepository.getMyTasksByStatus(UserUtils.getActualUserIdOrThrow(), TaskStatus.DONE.name(), startIndex, quantity);
         return TaskMapper.toDtos(myTasks);
     }
 }

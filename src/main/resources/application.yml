@@ -7,8 +7,10 @@ spring:
       hibernate:
         jdbc:
           time_zone: UTC
+#    hibernate:
+#      ddl-auto: update
   datasource:
-    url: jdbc:postgresql://localhost:5432/custom_database
+    url: jdbc:postgresql://todo-app-db-lb:32032/custom_database
     username: postgres
     password: password
     hikari:
@@ -22,5 +24,5 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/custom-realm
-          jwk-set-uri: http://localhost:8080/realms/custom-realm/protocol/openid-connect/certs
+          issuer-uri: http://${KEYCLOAK}/realms/custom-realm
+          jwk-set-uri: http://${KEYCLOAK}/realms/custom-realm/protocol/openid-connect/certs

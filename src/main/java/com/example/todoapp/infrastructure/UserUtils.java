@@ -9,13 +9,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserUtils {
 
-    public static String getActualUserId() {
+    public static String getActualUserIdOrThrow() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (!(authentication instanceof AnonymousAuthenticationToken)) {
             return authentication.getName();
         }
         else {
-            return null;
+            throw new IllegalStateException();
         }
     }
 }

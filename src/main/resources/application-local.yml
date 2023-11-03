@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/custom_database
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/custom-realm
+          jwk-set-uri: http://localhost:8080/realms/custom-realm/protocol/openid-connect/certs
