@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app-keycloak-h2-deployment
+spec:
+  selector:
+    matchLabels:
+      app: todo-app-keycloak-h2
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: todo-app-keycloak-h2
+    spec:
+      containers:
+        - name: todo-app-keycloak-h2-container
+          # image built by ./env/docker/Dockerfile-keycloak file
+          # with test-users and realm settings
+          image: todo-app-keycloak
+          args: [ -v start-dev --import-realm ]
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KC_HTTP_ENABLED
+              value: 'true'
+            - name: KEYCLOAK_ADMIN
+              value: admin
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: admin
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-app-keycloak-h2-svc
+spec:
+  selector:
+    app: todo-app-keycloak-h2
+  ports:
+    - protocol: "TCP"
+      targetPort: 8080
+      port: 32061
+      nodePort: 32061
+  type: NodePort

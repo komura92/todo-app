@@ -1,0 +1,99 @@
+###########################
+###### TO-DO APP DB #######
+###########################
+# DB for TO-DO app exposed as ClusterIP -> accessible only inside k8s cluster
+
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: todo-app-config
+  labels:
+    app: todo-app-db
+data:
+  POSTGRES_DB: "custom_database"
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "password"
+  POSTGRES_HOST: "todo-app-db"
+#  POSTGRES_CONNECTION_URL: "jdbc:postgresql://todo-app-db-lb:5432/custom_database"
+  KEYCLOAK: 'todo-app-keycloak-h2-svc:32061'
+
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: todo-app-db-pv-volume
+  labels:
+    type: local
+    app: todo-app-db
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/todo-app/data/postgres/app"
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: todo-app-db-pv-claim
+  labels:
+    app: todo-app-db
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: todo-app-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-app-db
+  template:
+    metadata:
+      labels:
+        app: todo-app-db
+    spec:
+      containers:
+        - name: todo-app-db
+          image: postgres:13.1-alpine
+          imagePullPolicy: "IfNotPresent"
+          envFrom:
+            - configMapRef:
+                name: todo-app-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-vol-app
+      volumes:
+        - name: db-vol-app
+          persistentVolumeClaim:
+            claimName: todo-app-db-pv-claim
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-app-db-lb
+  labels:
+    app: todo-app-db-lb
+spec:
+  type: ClusterIP
+  ports:
+    - port: 32032
+      targetPort: 5432
+  selector:
+    app: todo-app-db
+

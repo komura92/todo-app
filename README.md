@@ -8,7 +8,7 @@ You can find here some useful integration elements like DB or Keycloak connectio
 
 #
 ## Practical usage of project
-Except that every programmer loves - a good copy-paste source it's also a good opportunity to try development in some existing project. Try to change something! :)
+Except that every programmer loves - a good copy-paste source it's also a good opportunity to try development in some existing project or to work with docker/kubernetes. Try to change something! :)
 
 I used this project for comparing a cost difference between cases when we are using Java 11 or Java 21 version, including docker aspects. If you are interested in that research result please read article below.
 
@@ -41,7 +41,7 @@ In the project root directory you can find script called _[run_docker-compose.sh
     ./run_docker-compose.sh s
 
 This command will run:
-- Keycloak service image with imported realm and users from _./src/main/resources/keycloak/*_
+- Keycloak service image with imported realm and users from _./src/main/resources/keycloak/*_,
 - Postgres DB server image with created database and credentials configured.
 
 Script help output:
@@ -57,6 +57,45 @@ Script help output:
     
     Running this script requires :
     - installed and running docker
+
+
+#
+### Kubernetes (minikube)
+
+Project root directory also contains script which automates running environment locally with Kubernetes - _[run_kubernetes.sh](run_kubernetes.sh)_. It can be helpful with:
+- cleaning actual environment,
+- building Keycloak image with required imports included,
+- starting minikube environment,
+- applying deployment configurations,
+- stopping minikube session,
+- starting minikube dashboard,
+- listing available images for docker and minikube.
+
+
+When running project first time you can run script with below command. It will build necessary Keycloak image, start minikube environment and apply configuration for development environment. In this case you should also run app with <ins>docker profile</ins>.
+
+    ./run_kubernetes.sh bsr
+
+###
+
+Script help output:
+
+    Usage: ./run_kubernetes.sh [options...]
+    c  - [CLEAN]     delete minikube environment
+    b  - [BUILD]     build to-do app and keycloak images
+    s  - [START]     start minikube
+    r  - [RUN]       apply dev environment deployments (for local development)
+    f  - [FULL]      apply full environment deployments (app included)
+    e  - [END]       end session (stop minikube)
+    d  - [DASHBOARD] start minikube dashboard
+    i  - [IMAGES]    list docker and minikube images
+    
+    Example:
+    ./run_kubernetes.sh sr
+    
+    Running this script requires :
+    - running docker with API exposed,
+    - installed minikube.
 
 
 #

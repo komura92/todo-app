@@ -1,0 +1,154 @@
+
+#########################
+###### KEYCLOAK DB ######
+#########################
+
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: postgres-keycloak-config
+  labels:
+    app: todo-app-keycloak-db
+data:
+  POSTGRES_DB: "keycloak_database"
+  POSTGRES_USER: "postgres"
+  POSTGRES_PASSWORD: "password"
+
+
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: todo-app-keycloak-db-pv-volume
+  labels:
+    type: local
+    app: todo-app-keycloak-db
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/mnt/todo-app/data/postgres/keycloak"
+
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: todo-app-keycloak-db-pv-claim
+  labels:
+    app: todo-app-keycloak-db
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: todo-app-keycloak-db
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-app-keycloak-db
+  template:
+    metadata:
+      labels:
+        app: todo-app-keycloak-db
+    spec:
+      containers:
+        - name: todo-app-keycloak-db
+          image: postgres:13.1-alpine
+          imagePullPolicy: "IfNotPresent"
+          #          ports:
+          #            - containerPort: 5432  # Exposes container port
+          envFrom:
+            - configMapRef:
+                name: postgres-keycloak-config
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: db-vol-keycloak
+      volumes:
+        - name: db-vol-keycloak
+          persistentVolumeClaim:
+            claimName: todo-app-keycloak-db-pv-claim
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-app-keycloak-db-lb
+  labels:
+    app: todo-app-keycloak-db-lb
+spec:
+  type: ClusterIP
+  ports:
+    - port: 5432
+  selector:
+    app: todo-app-keycloak-db
+
+
+##############################
+###### KEYCLOAK SERVICE ######
+##############################
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-app-keycloak-deployment
+spec:
+  selector:
+    matchLabels:
+      app: todo-app-keycloak
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: todo-app-keycloak
+    spec:
+      containers:
+        - name: todo-app-keycloak-container
+          image: todo-app-keycloak
+          args: [ -v start-dev --import-realm ]
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KC_DB
+              value: postgres
+            - name: KC_DB_PASSWORD
+              value: password
+            - name: KC_DB_URL
+              value: jdbc:postgresql://todo-app-keycloak-db-lb:5432/keycloak_database
+            - name: KC_DB_USERNAME
+              value: postgres
+            - name: KC_HTTP_ENABLED
+              value: 'true'
+            - name: KEYCLOAK_ADMIN
+              value: admin
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              value: admin
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: todo-app-keycloak-svc
+spec:
+  selector:
+    app: todo-app-keycloak
+  ports:
+    - protocol: "TCP"
+      targetPort: 8080
+      port: 32061
+      nodePort: 32061
+  type: NodePort
