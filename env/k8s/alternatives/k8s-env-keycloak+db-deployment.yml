@@ -64,7 +64,7 @@ spec:
     spec:
       containers:
         - name: todo-app-keycloak-db
-          image: postgres:13.1-alpine
+          image: postgres:16.1-alpine
           imagePullPolicy: "IfNotPresent"
           #          ports:
           #            - containerPort: 5432  # Exposes container port

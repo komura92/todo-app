@@ -5,41 +5,19 @@ import java.util.List;
 
 import jakarta.annotation.PostConstruct;
 
-import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
-import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 
 import com.example.todoapp.domain.constants.TaskTestConstants;
 import com.example.todoapp.domain.validator.TaskDtoValidator;
 import com.example.todoapp.domain.model.TaskDto;
 import com.example.todoapp.domain.model.TaskStatus;
+import com.example.todoapp.infrastructure.BaseApiTest;
 import com.example.todoapp.infrastructure.client.TaskClient;
 
 import static org.hibernate.internal.util.collections.CollectionHelper.isNotEmpty;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ExtendWith(SpringExtension.class)
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
-class TaskControllerPaginationTest {
-
-
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private Environment environment;
+class TaskControllerPaginationTest extends BaseApiTest {
 
     private TaskClient taskClient;
 

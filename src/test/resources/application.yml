@@ -1,16 +1,15 @@
 spring:
+
   datasource:
-    username: sa
-    url: jdbc:h2:mem:testdb
-    password: password
+    username: ${DB_USERNAME}
+    url: jdbc:tc:postgresql:16.1:///integration-tests-db
+    password: ${DB_PASSWORD}
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+  jpa:
+    hibernate:
+      ddl-auto: create
   security:
     oauth2:
       resourceserver:
         jwt:
-          # local tests
-#          issuer-uri: http://localhost:8080/realms/custom-realm
-#          jwk-set-uri: http://localhost:8080/realms/custom-realm/protocol/openid-connect/certs
-
-          # docker and k8s tests
-          issuer-uri: http://todo-app-keycloak-h2-svc:32061/realms/custom-realm
-          jwk-set-uri: http://todo-app-keycloak-h2-svc:32061/realms/custom-realm/protocol/openid-connect/certs
+          issuer-uri: ${KC_URL}

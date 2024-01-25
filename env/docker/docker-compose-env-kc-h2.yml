@@ -7,7 +7,7 @@ services:
 
 # APP PG DB
   todo-app-db:
-    image: 'postgres:13.1-alpine'
+    image: 'postgres:16.1-alpine'
     container_name: todo-app-db-dc
     environment:
       - POSTGRES_USER=postgres

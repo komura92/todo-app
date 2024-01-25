@@ -68,7 +68,7 @@ spec:
     spec:
       containers:
         - name: todo-app-db
-          image: postgres:13.1-alpine
+          image: postgres:16.1-alpine
           imagePullPolicy: "IfNotPresent"
           envFrom:
             - configMapRef:

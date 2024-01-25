@@ -18,7 +18,7 @@ services:
 
 
   todo-app-db:
-    image: 'postgres:13.1-alpine'
+    image: 'postgres:16.1-alpine'
     container_name: todo-app-db-dc
     environment:
       - POSTGRES_USER=postgres
@@ -29,7 +29,7 @@ services:
 
 
   todo-app-keycloak-db:
-    image: 'postgres:13.1-alpine'
+    image: 'postgres:16.1-alpine'
     container_name: todo-app-keycloak-db-dc
     environment:
       - POSTGRES_USER=postgres

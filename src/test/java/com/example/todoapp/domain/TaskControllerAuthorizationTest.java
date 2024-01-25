@@ -1,6 +1,7 @@
 package com.example.todoapp.domain;
 
 import com.example.todoapp.domain.constants.TaskTestConstants;
+import com.example.todoapp.infrastructure.BaseApiTest;
 import com.example.todoapp.infrastructure.client.KeycloakClient;
 import com.example.todoapp.infrastructure.client.TestUser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -8,15 +9,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import jakarta.annotation.PostConstruct;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.env.Environment;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -26,18 +21,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ExtendWith(SpringExtension.class)
-class TaskControllerAuthorizationTest {
-
-
-    @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
-    @Autowired
-    private MockMvc mvc;
-
-    @Autowired
-    private Environment environment;
+class TaskControllerAuthorizationTest extends BaseApiTest {
 
     private KeycloakClient keycloakClient;
 
@@ -47,6 +31,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(1)
     void authorizedCanCreateUpdateTask() throws Exception {
         mvc.perform(post("/task")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -61,6 +46,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(2)
     void unauthorizedCannotCreateUpdateTask() throws Exception {
         mvc.perform(post("/task")
                         .contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -70,6 +56,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(3)
     void authorizedCanGetOpenTasks() throws Exception {
         mvc.perform(get("/task/open")
                         .queryParam("startIndex", "0")
@@ -80,6 +67,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(4)
     void unauthorizedCannotGetOpenTasks() throws Exception {
         mvc.perform(get("/task/open")
                         .queryParam("startIndex", "0")
@@ -89,6 +77,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(5)
     void authorizedCanGetDoneTasks() throws Exception {
         mvc.perform(get("/task/done")
                         .queryParam("startIndex", "0")
@@ -99,6 +88,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(6)
     void unauthorizedCannotGetDoneTasks() throws Exception {
         mvc.perform(get("/task/done")
                         .queryParam("startIndex", "0")
@@ -108,6 +98,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(7)
     void authorizedCanDeleteTask() throws Exception {
         mvc.perform(delete("/task?taskId=-1")
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
@@ -116,6 +107,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(8)
     void unauthorizedCannotDeleteTask() throws Exception {
         mvc.perform(delete("/task?taskId=-1"))
                 .andDo(MockMvcResultHandlers.print())
@@ -123,6 +115,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(9)
     void authorizedCanMarkTaskAsDone() throws Exception {
         mvc.perform(put("/task?taskId=-1")
                         .header("Authorization", "Bearer " + keycloakClient.getAccessToken(TestUser.USER)))
@@ -131,6 +124,7 @@ class TaskControllerAuthorizationTest {
     }
 
     @Test
+    @Order(10)
     void unauthorizedCannotMarkTaskAsDone() throws Exception {
         mvc.perform(delete("/task?taskId=1"))
                 .andDo(MockMvcResultHandlers.print())
