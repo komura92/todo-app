@@ -10,7 +10,7 @@
   </parent>
   <groupId>com.example</groupId>
   <artifactId>todo-app</artifactId>
-  <version>v0.0.2</version>
+  <version>v0.0.3-SNAPSHOT</version>
   <name>todo-app</name>
   <description>todo-app</description>
   <properties>
